@@ -5,3 +5,5 @@ with open('Data/'+nombre, 'r') as archivo:
         linea = linea.strip()
 
         print(linea)
+        
+def 
