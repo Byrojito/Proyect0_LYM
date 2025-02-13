@@ -1,3 +1,20 @@
+def start(name_txt):
+    dic_var = {
+        "variables": None
+    }
+
+    with open('Data/'+name_txt, 'r') as archivo:
+        for linea in archivo:
+            linea = linea.strip()
+            x = recursive(linea, dic_var)
+            
+
+
+def recursive(line_txt, dict_1):
+    
+    
+
+
 def variables(line_txt,dict_1,inter):
     if line_txt.count("|") == 2:
         i = inter
@@ -23,11 +40,5 @@ def functions(line_txt):
 
 
 
-nombre = "example.txt"
 
-with open('Data/'+nombre, 'r') as archivo:
-    for linea in archivo:
-        linea = linea.strip()
-
-        print(linea)
         
