@@ -1,37 +1,43 @@
 def start(name_txt):
     dic_var = {
-        "variables": None
+        "variables": []
     }
 
     with open('Data/'+name_txt, 'r') as archivo:
         for linea in archivo:
-            linea = linea.strip()
-            x = recursive(linea, dic_var)
+            x = recursive_parcel(linea, dic_var)
+            if x == False:
+                return "Wrong"
+        if x == True:
+            return "Good"
             
 
-def recursive(line_txt, dict_1):
-    for char in line_txt:
-        if len(line_txt) == 0:
-            return
-        if line_txt[char] == " ":
-            recursive(line_txt[char:], dict_1)
-        elif line_txt[char] == "|":
-            declaracion_variables(line_txt, dict_1,char)
+def recursive_parcel(line_txt, dict_1):
+    if len(line_txt) == 0:
+            return True
+    else:
+        if line_txt[0] == "|":
+            declaracion_variables(line_txt, dict_1)
+        elif line_txt[0] == "proc":
+            restante = procesos(line_txt,dict_1)
+            return restante
+        elif line_txt[0] == "[":
+            bloques(line_txt, dict_1)
             
-
-
-def declaracion_variables(line_txt,dict_1,inter):
+            
+            
+def declaracion_variables(line_txt, dict_1):
     if line_txt.count("|") == 2:
-        i = inter
-        delta = False
-        while line_txt[i] < len(line_txt) and delta == False:             
-            dict_1["variables"] = 
+        variables = line_txt.split('|')[1].strip().split()
+        for var in variables:
+            dict_1["variables"].append(var)
+ 
         
-        
-def variables2():
+def procesos(line_txt, dict_1):
+    
         
 
-def actions(line_txt):
+def bloques(line_txt, dict_1):
     
     return
 
