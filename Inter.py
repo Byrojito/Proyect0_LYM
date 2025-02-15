@@ -14,23 +14,26 @@ def start(name_txt):
 
 def recursive_parcel(line_txt, dict_1):
     if len(line_txt) == 0:
-            return True
+        return True
+    if line_txt[0] == " ":
+        return True
+    if line_txt[0] == "|":
+        return declaracion_variables(line_txt, dict_1)
+    if line_txt[0] == "proc":
+        restante = procesos(line_txt,dict_1)
+        return restante
+    if line_txt[0] == "[":
+        bloques(line_txt, dict_1)
     else:
-        if line_txt[0] == "|":
-            declaracion_variables(line_txt, dict_1)
-        elif line_txt[0] == "proc":
-            restante = procesos(line_txt,dict_1)
-            return restante
-        elif line_txt[0] == "[":
-            bloques(line_txt, dict_1)
-            
-            
+        return False
             
 def declaracion_variables(line_txt, dict_1):
     if line_txt.count("|") == 2:
         variables = line_txt.split('|')[1].strip().split()
         for var in variables:
             dict_1["variables"].append(var)
+        recursive_parcel(line_txt, dict_1)
+            
  
         
 def procesos(line_txt, dict_1):
