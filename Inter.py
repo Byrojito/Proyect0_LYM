@@ -2,7 +2,8 @@ import instrucciones as tools
 
 def start(name_txt):
     dic_var = {
-        "variables": []
+        "variables": [],
+        "procedimientos": {}
     }
 
     with open('Data/'+name_txt, 'r') as archivo:
@@ -41,7 +42,9 @@ def declaracion_variables(lineas, index, dict_1):
         return False, index
 
 def procesos(line_txt, dict_1):
-
+    nombre_procedimiento = line_txt.split()[1]
+    parametros = line_txt.split()[2:-1]
+    dict_1["procedures"][nombre_procedimiento] = parametros
     return True, 0
 
 def bloques(lineas, index, dict_1):
