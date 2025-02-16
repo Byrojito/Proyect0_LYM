@@ -25,9 +25,9 @@ def recursive_parcel(lineas, index, dict_1):
                 return declaracion_variables(lineas, index, dict_1)
             if line_txt[0] == "proc":
                 restante = procesos(line_txt, dict_1)
-                return restante, index + 1
+                return restante, index
             if line_txt[0] == "[":
-                return bloques(lineas, dict_1), index + 1
+                return bloques(lineas, dict_1), 
     return False, index
             
 def declaracion_variables(lineas, index, dict_1):
@@ -45,20 +45,19 @@ def procesos(line_txt, dict_1):
     return True, 0
 
 def bloques(lineas, index, dict_1):
-    line_txt = lineas[index].strip()
-    if len(line_txt) > 2:
-        return False, index
-    else:
-        line = line_txt[index+1].strip()
-        tools.instructions(line, tools.constants)
-        if len(lineas) > index+1:
-            recursive_parcel(lineas, index, dict_1)
+    index += 1
+    while index < len(lineas):
+        line_txt = lineas[index].strip()
+        if line_txt == "]":
+            return True, index + 1
+        elif line_txt == "[":
+            x, index = bloques(lineas, index, dict_1)
+            if x == False:
+                return False, index
         else:
-            
-        
-        
-    
-    return True, 0
+            tools.instructions(line_txt, tools.constants)
+        index += 1
+    return False, index
 
 
 
