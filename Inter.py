@@ -53,7 +53,6 @@ def procesos(line_txt, dict_1):
             parametros.append(linea[i])
             i += 1
 
-        # Guardamos el procedimiento y sus parámetros en el diccionario
         dict_1["procedures"][nombre_procedimiento] = parametros
 
         # Verificamos si el bloque de código está presente
@@ -67,11 +66,24 @@ def procesos(line_txt, dict_1):
         while i < len(linea):
             if linea[i][-1] == ":":
                 nombre_procedimiento = linea[i]
-                parametro = linea[i + 1]
-                dict_1["procedures"][nombre_procedimiento] = parametro
-            i += 2
+                parametros = []
+                i += 1
+                while i < len(linea) and linea[i][-1] != ".":
+                    parametros.append(linea[i])
+                    i += 1
+                if i < len(linea) and linea[i][-1] == ".":
+                    parametro_final = linea[i][:-1]  # Eliminamos el punto del último parámetro
+                    parametros.append(parametro_final)
+                    dict_1["procedures"][nombre_procedimiento] = parametros
+                    return True, 0
+                else:
+                    return False, 0  
+            i += 1
         return True, 0
-    
+    else:
+        return False, 0
+
+
 
 def bloques(lineas, index, dict_1):
     index += 1
@@ -89,5 +101,4 @@ def bloques(lineas, index, dict_1):
     return False, index
 
 
-
-        
+     
