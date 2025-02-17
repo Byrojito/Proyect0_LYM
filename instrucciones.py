@@ -76,8 +76,6 @@ def loop_for(line):
 
 
 
-
-
 def loop_while(line,constants):
     line= line.strip()
     if "do:" not in line:
@@ -87,6 +85,9 @@ def loop_while(line,constants):
         return False
     condicion = partes[0][6:].strip()  
     bloque1 = partes[1].strip()
+    if not (bloque1.startswith("[") and bloque1.endswith("]")):
+         return False
+    bloque1 = bloque1[1:-1]
     if not tipos_condiciones(condicion,constants):
         return False
     if not verificar_bloques(bloque1, bloque1):
@@ -101,7 +102,7 @@ def if_condition(line, constants):
     line = line.strip()
     if "then:" not in line or "else:" not in line:
         return False
-    partes = line.split(" then: ",1)
+    partes = line.split(" then: ")
     if len(partes) != 2:
         return False
     condicion = partes[0][3:].strip()  # Quitar "if:"
@@ -109,6 +110,9 @@ def if_condition(line, constants):
     if len(resto) != 2:
         return False
     bloque1, bloque2 = resto[0].strip(), resto[1].strip()
+    if not (bloque1.startswith("[") and bloque2.startswith("[")) and (bloque1.endswith("[") and bloque2.endswith("[")):
+                                                                      return False
+    bloque1,bloque2 = bloque1[1:-1], bloque2[1:-1]                                                                  
     if not tipos_condiciones(condicion, constants):
         return False
     if not verificar_bloques(bloque1, bloque2):
@@ -133,13 +137,13 @@ def tipos_condiciones(condicion,constants):
 
     
     if condicion.startswith("facing:"):
-        parte = condicion[7:-1].strip()  # Quitar "facing:"
+        parte = condicion[7:].strip()  # Quitar "facing:"
         if parte not in constants["O"]:
             return False
         return True
     
     if condicion.startswith("canPut:"):
-        parte = condicion[7:-1].strip()
+        parte = condicion[7:].strip()
         parte1 = parte.split("ofType:")
         if len(parte1) != 2:
             return False
@@ -149,7 +153,7 @@ def tipos_condiciones(condicion,constants):
         return True
 
     if condicion.startswith("canPick:"):
-        parte = condicion[8:-1].strip()
+        parte = condicion[8:].strip()
         parte1 = parte.split("ofType:")
         if len(parte1) != 2:
             return False
@@ -160,7 +164,7 @@ def tipos_condiciones(condicion,constants):
 
     if condicion.startswith("canMove:"):
         if "inDir:" in condicion:
-            parte = condicion[8:-1].strip()
+            parte = condicion[8:].strip()
             parte1 = parte.split("inDir:")
             if len(parte1) != 2:
                 return False
@@ -170,7 +174,7 @@ def tipos_condiciones(condicion,constants):
             return False
 
         if "toThe:" in condicion:
-            parte = condicion[8:-1].strip()
+            parte = condicion[8:].strip()
             parte1 = parte.split("toThe:")
             if len(parte1) != 2:
                 return False
@@ -182,7 +186,7 @@ def tipos_condiciones(condicion,constants):
 
     if condicion.startswith("canJump:"):
         if "inDir:" in condicion:
-            parte = condicion[8:-1].strip()
+            parte = condicion[8:].strip()
             parte1 = parte.split("inDir:")
             if len(parte1) != 2:
                 return False
@@ -192,7 +196,7 @@ def tipos_condiciones(condicion,constants):
             return False
 
         if "toThe:" in condicion:
-            parte = condicion[8:-1].strip()
+            parte = condicion[8:].strip()
             parte1 = parte.split("toThe:")
             if len(parte1) != 2:
                 return False
@@ -381,15 +385,15 @@ def variable_assignments(line):
 
 
 asignaciones = "c := 6 ."
-condicion5 = "canJump: 1 inDir: #west ."
+condicion5 = "canJump: 6 inDir: #west "
 instruccion= "move: 6 inDir: #south ."
-codigo_if = "if: canJump: 6 inDir: #west . then: move: 1 inDir: #west . else: nop ."
-codigo_while = "while: canMove: 1 inDir: #west . do: jump: 6 inDir: #south ."
+codigo_if = "if: canJump: 6 inDir: #west then: [move: 1 inDir: #west .] else: [nop .]"
+codigo_while = "while: canMove: 1 inDir: #west do: [jump: 6 inDir: #south .]"
 codigo_for ="for: 6 repeat: move: 6 inDir: #south ."
 
 #print(tipos_condiciones(condicion5,constants))
 
-print(condition(asignaciones))
+print(condition(codigo_while))
         
 
 
