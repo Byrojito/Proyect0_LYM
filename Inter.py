@@ -42,10 +42,36 @@ def declaracion_variables(lineas, index, dict_1):
         return False, index
 
 def procesos(line_txt, dict_1):
-    nombre_procedimiento = line_txt.split()[1]
-    parametros = line_txt.split()[2:-1]
-    dict_1["procedures"][nombre_procedimiento] = parametros
-    return True, 0
+    linea = line_txt.split()
+
+    # Verificamos si es una declaración de procedimiento
+    if len(linea) > 1 and linea[0] == "proc":
+        nombre_procedimiento = linea[1]
+        parametros = []
+        i = 2
+        while i < len(linea) and linea[i] != "[":
+            parametros.append(linea[i])
+            i += 1
+
+        # Guardamos el procedimiento y sus parámetros en el diccionario
+        dict_1["procedures"][nombre_procedimiento] = parametros
+
+        # Verificamos si el bloque de código está presente
+        if i < len(linea) and linea[i] == "[":
+            return bloques(line_txt, i, dict_1)
+        return True, 0
+
+    # Verificamos si es una llamada a procedimiento
+    if len(linea) > 1:
+        i = 0
+        while i < len(linea):
+            if linea[i][-1] == ":":
+                nombre_procedimiento = linea[i]
+                parametro = linea[i + 1]
+                dict_1["procedures"][nombre_procedimiento] = parametro
+            i += 2
+        return True, 0
+    
 
 def bloques(lineas, index, dict_1):
     index += 1
