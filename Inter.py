@@ -53,11 +53,11 @@ def procesos(line_txt, dict_1):
             parametros.append(linea[i])
             i += 1
 
-        dict_1["procedures"][nombre_procedimiento] = parametros
+        dict_1["procedimientos"][nombre_procedimiento] = parametros
 
         # Verificamos si el bloque de código está presente
         if i < len(linea) and linea[i] == "[":
-            return bloques(line_txt, i, dict_1)
+            return bloques(linea, i, dict_1)
         return True, 0
 
     # Verificamos si es una llamada a procedimiento
@@ -65,7 +65,7 @@ def procesos(line_txt, dict_1):
         i = 0
         while i < len(linea):
             if linea[i][-1] == ":":
-                nombre_procedimiento = linea[i]
+                nombre_procedimiento = linea[i][:-1]  # Eliminamos el punto final del nombre
                 parametros = []
                 i += 1
                 while i < len(linea) and linea[i][-1] != ".":
@@ -74,7 +74,7 @@ def procesos(line_txt, dict_1):
                 if i < len(linea) and linea[i][-1] == ".":
                     parametro_final = linea[i][:-1]  # Eliminamos el punto del último parámetro
                     parametros.append(parametro_final)
-                    dict_1["procedures"][nombre_procedimiento] = parametros
+                    dict_1["procedimientos"][nombre_procedimiento] = parametros
                     return True, 0
                 else:
                     return False, 0  
@@ -82,6 +82,7 @@ def procesos(line_txt, dict_1):
         return True, 0
     else:
         return False, 0
+
 
 
 
