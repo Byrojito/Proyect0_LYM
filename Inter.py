@@ -102,3 +102,7 @@ def bloques(lineas, index, dict_1):
 
 
      
+name = "example.txt"
+x = start(name)
+
+print(x)
