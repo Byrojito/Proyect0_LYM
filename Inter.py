@@ -1,16 +1,16 @@
 import instrucciones as tools
 
-def start(name_txt): #check
+def start(name_txt):
     dict_var = {
         "variables": [],
         "procedimientos": {}
     }
 
     with open('Data/'+name_txt, 'r') as archivo:
-        lineas = archivo.readlines()  # leemos todas las líneas y las almacenamos en una lista
+        lineas = [linea.strip() for linea in archivo.readlines()]  # leemos todas las líneas y les quitamos los saltos de línea
         if len(lineas) > 0:
             index = 0
-            while index < len(lineas)-1:
+            while index < len(lineas):
                 x, index, dict_var = recursive_parcel(lineas, index, dict_var)
                 if x == False:
                     return "Wrong"
@@ -18,21 +18,23 @@ def start(name_txt): #check
                 return "Good"
         else: 
             return "Wrong"
+
             
 def recursive_parcel(lineas, index, dict_1):
     if index < len(lineas):
         line_txt = lineas[index].strip()
-        if len(line_txt) != 0:
-            if line_txt[0] == "" or line_txt[0] == " ": #check
-                return True, index + 1, dict_1
-            if line_txt[0] == "|": # check
+        if len(line_txt) > 0:
+            if line_txt[0] == '|': # check
                 return declaracion_variables(lineas, index, dict_1)
-            if line_txt[0] == "proc": #check
+            if line_txt.startswith("proc"): #check
                 return procesos(lineas, index ,dict_1)
-            if line_txt[0] == "[": #check
+            if line_txt[0] == '[': #check
                 return bloques(lineas, index, dict_1)
-            if line_txt[-1] ==".":
+            if line_txt[-1] =='.':
                 return llamadaproc(lineas, index, dict_1)
+        else:
+            if line_txt == '' or line_txt[0]== ' ': #check
+                return True, index + 1, dict_1
     return False, index, dict_1
             
 def declaracion_variables(lineas, index, dict_1): #check
@@ -49,7 +51,7 @@ def procesos(lineas, index ,dict_1):
     line = lineas[index].split()
     
     # Verificamos si es una declaración de procedimiento
-    if len(line) > 1 and line[0] == "proc":
+    if len(line) > 1:
         i = 2
         if line[i] != "[":
             while i < len(line) and line[i] != "[":
