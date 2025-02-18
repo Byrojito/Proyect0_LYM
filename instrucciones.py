@@ -1,17 +1,3 @@
-def validacion_de_codigo (line):
-    if "[" in line:
-        bloque(line) == True    # llama a la funcion
-       # pasa de linea 
-    if "proc" in line:
-        procedure(line) == True # llama al funcion 
-        # pasa de linea 
-    if "|" in line:
-        variable_declaration(line) == True
-        # pasa linea
-    pass
-
-
-
 
 constants ={
         "D" : ["#left", "#right", "#around"],
@@ -24,26 +10,7 @@ constants ={
     }
 
 
-
-
-
-def verificar_bloques (line):
-    if "[" in line:
-        pass 
-
-def bloque():
-    pass
-
-def variable_declaration(line):
-    pass
-
-def procedure(line):
-    pass
-
-
-
-
-def condition (line):
+def condition (line):                                #funcion principal que valida si es una instruccion asignacion if while for
     if line.startswith("if:"):
         return if_condition(line,constants)
     if line.startswith("while:"):
@@ -58,7 +25,7 @@ def condition (line):
         return False
 
 
-def loop_for(line):
+def loop_for(line):                                   #verifica los for 
     line = line.strip()
     if "repeat:" not in line:
         return False
@@ -76,7 +43,7 @@ def loop_for(line):
 
 
 
-def loop_while(line,constants):
+def loop_while(line,constants):                         #verifica los while
     line= line.strip()
     if "do:" not in line:
         return False
@@ -98,7 +65,7 @@ def loop_while(line,constants):
 
 
 
-def if_condition(line, constants):
+def if_condition(line, constants):                    #verifica los if
     line = line.strip()
     if "then:" not in line or "else:" not in line:
         return False
@@ -123,7 +90,7 @@ def if_condition(line, constants):
     
 
 
-def verificar_bloques(bloque1, bloque2):
+def verificar_bloques(bloque1, bloque2):              # verifica si los que le pasa son bloques y llama a la funcion instructions
     if not instructions(bloque1,constants):
         return False
     if not instructions(bloque2,constants):
@@ -132,9 +99,8 @@ def verificar_bloques(bloque1, bloque2):
 
 
 
-def tipos_condiciones(condicion,constants):
+def tipos_condiciones(condicion,constants):             #verifica si lo pasado es una condicion o no 
     condicion = condicion
-
     
     if condicion.startswith("facing:"):
         parte = condicion[7:].strip()  # Quitar "facing:"
@@ -210,7 +176,7 @@ def tipos_condiciones(condicion,constants):
      
     
 
-def instructions(line:str, constants: dict):
+def instructions(line:str, constants: dict):             #verifica si lo que pasa por parametro es una instrccion o asisgnacion 
     line = line.strip() 
     if ":=" in line:
         return variable_assignments(line)
@@ -385,16 +351,16 @@ def variable_assignments(line):
 
 
 asignaciones = "c := 6 ."
-condicion5 = "canJump: 6 inDir: #west "
 instruccion= "move: 6 inDir: #south ."
 codigo_if = "if: canJump: 6 inDir: #west then: [move: 1 inDir: #west .] else: [nop .]"
 codigo_while = "while: canMove: 1 inDir: #west do: [jump: 6 inDir: #south .]"
 codigo_for ="for: 6 repeat: move: 6 inDir: #south ."
 
-#print(tipos_condiciones(condicion5,constants))
 
 print(condition(codigo_while))
         
+
+# el codigo core cin cualquiera de estas instrcciones que son correctas para el programa robot
 
 
 
