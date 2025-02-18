@@ -6,42 +6,41 @@ def start(name_txt):
         "procedimientos": {}
     }
 
-    with open('Data/'+name_txt, 'r') as archivo:
+    with open('Data/' + name_txt, 'r') as archivo:
         lineas = [linea.strip() for linea in archivo.readlines()]  # leemos todas las líneas y les quitamos los saltos de línea
         if len(lineas) > 0:
             index = 0
             while index < len(lineas):
                 x, index, dict_var = recursive_parcel(lineas, index, dict_var)
-                if x == False:
+                if not x:
                     return "Wrong"
-            if x == True:
+            if x:
                 return "Good"
-        else: 
+        else:
             return "Wrong"
 
-            
 def recursive_parcel(lineas, index, dict_1):
     if index < len(lineas):
         line_txt = lineas[index].strip()
         if len(line_txt) > 0:
-            if line_txt[0] == '|': # check
+            if line_txt[0] == '|':  # check
                 return declaracion_variables(lineas, index, dict_1)
-            if line_txt.startswith("proc"): #check
-                return procesos(lineas, index ,dict_1)
-            if line_txt[0] == '[' or line_txt[-1] =='.': #check
+            if line_txt.startswith("proc"):  # check
+                return procesos(lineas, index, dict_1)
+            if line_txt[0] == '[' or line_txt[-1] == '.':  # check
                 return bloques(lineas, index, dict_1)
         else:
-            if line_txt == '' or line_txt[0]== ' ': #check
+            if line_txt == '' or line_txt[0] == ' ':  # check
                 return True, index + 1, dict_1
-    return False, index, dict_1
-            
-def declaracion_variables(lineas, index, dict_1): #check
+    return False, index, dict_1  
+
+def declaracion_variables(lineas, index, dict_1):  # check
     line_txt = lineas[index].strip()
     if line_txt.count("|") == 2:
         variables = line_txt.split('|')[1].strip().split()
         for var in variables:
             dict_1["variables"].append(var)
-        return True,  index + 1, dict_1 # pasamos a la siguiente línea
+        return True, index + 1, dict_1  # pasamos a la siguiente línea
     else:
         return False, index, dict_1
 
@@ -72,7 +71,7 @@ def procesos(lineas, index, dict_1):
     # Verificamos si es una llamada a procedimiento
     else:
         nombre_procedimiento = line[0]
-        if nombre_procedimiento in dict_1["procedures"]:
+        if nombre_procedimiento in dict_1["procedimientos"]:
             parametros = []
             i = 1
             while i < len(line) and line[i][-1] != ".":
@@ -81,14 +80,11 @@ def procesos(lineas, index, dict_1):
             if i < len(line) and line[i][-1] == ".":
                 parametro_final = line[i][:-1]  # Eliminamos el punto del último parámetro
                 parametros.append(parametro_final)
-                # Aquí podrías implementar la lógica para manejar la llamada al procedimiento con los parámetros
                 return True, index + 1, dict_1
             else:
-                return False, index, dict_1  # Error en la sintaxis de llamada a procedimiento
+                return False, index, dict_1  
         else:
             return False, index, dict_1
-
-   
 def bloques(lineas, index, dict_1): #check
     index += 1
     while index < len(lineas):
