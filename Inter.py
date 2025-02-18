@@ -28,10 +28,8 @@ def recursive_parcel(lineas, index, dict_1):
                 return declaracion_variables(lineas, index, dict_1)
             if line_txt.startswith("proc"): #check
                 return procesos(lineas, index ,dict_1)
-            if line_txt[0] == '[': #check
+            if line_txt[0] == '[' or line_txt[-1] =='.': #check
                 return bloques(lineas, index, dict_1)
-            if line_txt[-1] =='.':
-                return llamadaproc(lineas, index, dict_1)
         else:
             if line_txt == '' or line_txt[0]== ' ': #check
                 return True, index + 1, dict_1
@@ -47,59 +45,50 @@ def declaracion_variables(lineas, index, dict_1): #check
     else:
         return False, index, dict_1
 
-def procesos(lineas, index ,dict_1):
-    line = lineas[index].split()
-    
+def procesos(lineas, index, dict_1):
+    line = lineas[index].strip().split()
+
     # Verificamos si es una declaración de procedimiento
-    if len(line) > 1:
+    if line[0] == "proc":
+        nombre_procedimiento = line[1]
+        parametros = []
         i = 2
-        if line[i] != "[":
-            while i < len(line) and line[i] != "[":
-                if line[i][-1] != ":":
-                    return False, index, dict_1
-                elif line[i][-1] == ":": 
-                    nombre_procedimiento = line[i]
-                    if line[i+1][-1] != ":":
-                        parametros = line[i+1]
-                        dict_1["procedimientos"][nombre_procedimiento] = parametros
-                    else:
-                        return False, index, dict_1  
+        while i < len(line) and line[i] != "[":
+            if line[i][-1] == ":":
+                if i + 1 < len(line) and line[i + 1][-1] != ":":
+                    parametros.append(line[i + 1])
                 else:
-                        return False, index, dict_1
-                i += 2
-            return bloques(lineas, index, dict_1) 
-            
-        else: 
-            if line[2] == "[":
-                return bloques(lineas, index, dict_1)
+                    return False, index, dict_1
+            i += 2
 
-def llamadaproc(lineas, index, dict_1):
-    line_txt = lineas[index].strip()
-    partes = line_txt.split()
-    
-    if len(partes) < 2:
-        return False, index
-    
-    nombre_procedimiento = partes[0][:-1]  # Eliminamos el ":" al final del nombre
-    parametros = []
-    i = 1
-    while i < len(partes):
-        if partes[i][-1] == ".":
-            parametro_final = partes[i][:-1]  # Eliminamos el punto final del último parámetro
-            parametros.append(parametro_final)
-            break
+        # Guardamos el procedimiento y sus parámetros en el diccionario
+        dict_1["procedimientos"][nombre_procedimiento] = parametros
+
+        # Verificamos si el bloque de código está presente
+        if i < len(line) and line[i] == "[":
+            return bloques(lineas, index, dict_1)
+        return True, index + 1, dict_1
+
+    # Verificamos si es una llamada a procedimiento
+    else:
+        nombre_procedimiento = line[0]
+        if nombre_procedimiento in dict_1["procedures"]:
+            parametros = []
+            i = 1
+            while i < len(line) and line[i][-1] != ".":
+                parametros.append(line[i])
+                i += 1
+            if i < len(line) and line[i][-1] == ".":
+                parametro_final = line[i][:-1]  # Eliminamos el punto del último parámetro
+                parametros.append(parametro_final)
+                # Aquí podrías implementar la lógica para manejar la llamada al procedimiento con los parámetros
+                return True, index + 1, dict_1
+            else:
+                return False, index, dict_1  # Error en la sintaxis de llamada a procedimiento
         else:
-            parametros.append(partes[i])
-        i += 1
-    
-    # Verificamos si el procedimiento existe en dict_1["procedimientos"]
-    if nombre_procedimiento not in dict_1["procedimientos"]:
-        return False, index
-    
-    dict_1["procedimientos"][nombre_procedimiento] = parametros
-    return True, index + 1
-    
+            return False, index, dict_1
 
+   
 def bloques(lineas, index, dict_1): #check
     index += 1
     while index < len(lineas):
